@@ -28,6 +28,41 @@ def crop_encyclopedia():
                     print(f"Failed to process {file_path}: {e}")
 
 
+def extract_item_icons():
+    folders = ["commodities", "equipment", "weapons"]
+    crop_box = (0, 0, 75, 100)
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    for folder in folders:
+        folder_path = os.path.join(base_dir, folder)
+        if not os.path.exists(folder_path):
+            print(f"Folder not found: {folder_path}")
+            continue
+
+        for filename in os.listdir(folder_path):
+            if not filename.lower().endswith(('.jpg')):
+                continue
+
+            if f"{folder}_item_" not in filename.lower():
+                continue
+
+            end_part = filename.lower()[len(f"{folder}_item_"):]
+
+            file_path = os.path.join(folder_path, filename)
+            try:
+                with Image.open(file_path) as img:
+                    cropped = img.crop(crop_box)
+                    # Load data to ensure we can close the file before saving
+                    cropped.load()
+                
+                new_filename = f"{folder}_item_icon_{end_part}"
+                cropped.save(os.path.join(folder_path, new_filename))
+                print(f"Cropped: {file_path}")
+            except Exception as e:
+                print(f"Failed to process {file_path}: {e}")
+
+
 def break_up_encyclopedia() -> None:
     folders = ["commodities", "equipment", "weapons"]
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -61,7 +96,8 @@ def break_up_encyclopedia() -> None:
 
 def main() -> None:
     # crop_encyclopedia()
-    break_up_encyclopedia()
+    # break_up_encyclopedia()
+    extract_item_icons()
 
 
 if __name__ == "__main__":
