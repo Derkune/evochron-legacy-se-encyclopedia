@@ -19,9 +19,15 @@ def crop_folder_images(
         if not filename.lower().endswith(valid_exts):
             continue
 
+        if filename.lower().startswith("cropped_"):
+            continue
+
+        if filename.lower().startswith("selected_"):
+            continue
+
         file_path = os.path.join(folder_path, filename)
         stem, _ext = os.path.splitext(filename)
-        out_name = f"cropped_{stem}.png"
+        out_name = f"description_{stem}.png"
         out_path = os.path.join(folder_path, out_name)
 
         if (not overwrite) and os.path.exists(out_path):
@@ -41,8 +47,7 @@ def crop_folder_images(
 
 
 def main() -> None:
-    # rect pos (389, 111) and rect size (150, 551)
-    crop_box = (389, 111, 389 + 150, 111 + 551)
+    crop_box = (361, 788, 361 + 531, 788 + 183)
 
     target_folders = ["engines", "modules", "plating", "resistors", "wings"]
 
