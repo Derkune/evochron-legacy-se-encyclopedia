@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Engines - Evochron Encyclopedia OCR</title>
+  <style>
+:root{
+  --bg0:#050712;
+  --bg1:#070a18;
+  --panel: rgba(10, 16, 38, 0.72);
+  --panel2: rgba(14, 23, 55, 0.6);
+  --text: #d8f0ff;
+  --muted: rgba(216, 240, 255, 0.72);
+  --accent: #76d2ff;
+  --accent2:#b7f7ff;
+  --border: rgba(118, 210, 255, 0.35);
+  --shadow: rgba(118, 210, 255, 0.18);
+  --card-radius: 14px;
+}
+
+body{
+  margin:0;
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(1200px 900px at 20% -10%, rgba(118, 210, 255, 0.22), transparent 60%),
+              radial-gradient(900px 700px at 90% 10%, rgba(183, 247, 255, 0.16), transparent 55%),
+              linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow-x:hidden;
+}
+
+/* Starfield background (pure CSS) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.75) 1px, transparent 1.5px),
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.55) 1px, transparent 1.5px),
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.5) 1px, transparent 1.5px),
+    radial-gradient(circle at 55% 65%, rgba(255,255,255,0.6) 1px, transparent 1.5px),
+    radial-gradient(circle at 75% 25%, rgba(255,255,255,0.45) 1px, transparent 1.5px),
+    radial-gradient(circle at 88% 78%, rgba(255,255,255,0.55) 1px, transparent 1.5px);
+  opacity: 0.25;
+  filter: drop-shadow(0 0 6px rgba(118,210,255,0.12));
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:-30%;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 25% 15%, rgba(118,210,255,0.14) 0, transparent 40%),
+    radial-gradient(circle at 80% 35%, rgba(183,247,255,0.11) 0, transparent 45%);
+  transform: rotate(10deg);
+}
+
+.wrap{
+  position:relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 18px 60px;
+}
+
+.topbar{
+  display:flex;
+  gap: 14px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 18px;
+}
+
+.brand{
+  display:flex;
+  gap: 12px;
+  align-items:center;
+}
+
+.logo{
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 55%),
+              linear-gradient(135deg, rgba(118,210,255,0.35), rgba(183,247,255,0.12));
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 35px var(--shadow);
+}
+
+.brand h1{
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+.brand p{
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.nav a{
+  color: var(--accent2);
+  text-decoration:none;
+  border: 1px solid rgba(118, 210, 255, 0.28);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(12, 18, 44, 0.45);
+  box-shadow: 0 12px 30px rgba(118,210,255,0.09);
+}
+.nav a:hover{
+  border-color: rgba(118, 210, 255, 0.55);
+}
+
+.page-title{
+  margin: 18px 0 8px;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+}
+
+.subtitle{
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+}
+
+.item-card{
+  display:flex;
+  gap: 14px;
+  align-items:flex-start;
+  padding: 14px;
+  border-radius: var(--card-radius);
+  background: linear-gradient(180deg, var(--panel), rgba(10,16,38,0.52));
+  border: 1px solid rgba(118, 210, 255, 0.26);
+  box-shadow: 0 18px 55px rgba(118,210,255,0.08);
+}
+
+.icon{
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(6, 10, 28, 0.45);
+  border: 1px solid rgba(118, 210, 255, 0.22);
+}
+
+.item-text{
+  flex: 1;
+  white-space: pre-wrap;
+  line-height: 1.25;
+  font-size: 13.2px;
+  color: rgba(216, 240, 255, 0.92);
+}
+
+.missing{
+  color: rgba(255, 190, 190, 0.95);
+  font-style: italic;
+}
+
+.footer{
+  margin-top: 28px;
+  color: rgba(216,240,255,0.55);
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Evochron Encyclopedia</h1>
+        </div>
+      </div>
+      <div class="nav">
+        <a href="index.html">Index</a>
+      </div>
+    </div>
+
+    <div class="page-title">Engines Items</div>
+
+    <div class="list">
+      <div class="item-card" data-key="engines:selected_cropped_20260223200545_1_part_1.png">
+  <img class="icon" src="engines/selected_cropped_20260223200545_1_part_1.png" alt="engines:selected_cropped_20260223200545_1_part_1.png" loading="lazy"/>
+  <div class="item-text">Illumine MK I Engine
+While merely an entry level engine, the Illumine is ideal for
+Scouts that are designed more for shipping, mining, cleaning, trade, and other non-combat objectives. The engine is known for its low cost of operation, being the most fuel efficient type of engine available to mercenaries.
+
+Assembly: 15
+Thrust: 150</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200547_1_part_2.png">
+  <img class="icon" src="engines/selected_cropped_20260223200547_1_part_2.png" alt="engines:selected_cropped_20260223200547_1_part_2.png" loading="lazy"/>
+  <div class="item-text">Illumine MK II Engine
+This upgraded version of the Illumine engine provides adequate performance for light combat duties, but is generally considered to be best for non-combat objectives.
+Its small design, low fuel consumption, and modest output provides a good first upgrade for rookie mercenaries flying light spacecraft.
+
+Assembly: 25
+Thrust: 300</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200548_1_part_3.png">
+  <img class="icon" src="engines/selected_cropped_20260223200548_1_part_3.png" alt="engines:selected_cropped_20260223200548_1_part_3.png" loading="lazy"/>
+  <div class="item-text">Voyage MK I Engine
+Designed to provide a high level of power with minimal assembly use, the Voyage class engine is an ideal choice for small spacecraft that need assembly resources for other critical components. It also includes twin vertical stabilizers to improve atmospheric control and is considered a good general purpose engine.
+
+Assembly: 45
+Thrust: 450</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200549_1_part_4.png">
+  <img class="icon" src="engines/selected_cropped_20260223200549_1_part_4.png" alt="engines:selected_cropped_20260223200549_1_part_4.png" loading="lazy"/>
+  <div class="item-text">Voyage MK II Engine
+The MKII offers remarkable power output for its size and assembly resources. It's considered by most mercenaries to be the best choice for light and medium class spacecraft.
+It also offers close to the power output of a Richton engine with a substantially lower assembly resource requirement.
+
+Assembly: 70
+Thrust: 600</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200550_1_part_5.png">
+  <img class="icon" src="engines/selected_cropped_20260223200550_1_part_5.png" alt="engines:selected_cropped_20260223200550_1_part_5.png" loading="lazy"/>
+  <div class="item-text">Richton Ion Engine
+The military research division in the Richton system developed this engine for use in interceptor class combat spacecraft and was soon made available to mercenaries looking for a propulsion system that balances fuel consumption with power output. The Richton is a good overall choice for a variety of combat and non-combat roles.
+
+Assembly: 90
+Thrust: 750</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200553_1_part_5.png">
+  <img class="icon" src="engines/selected_cropped_20260223200553_1_part_5.png" alt="engines:selected_cropped_20260223200553_1_part_5.png" loading="lazy"/>
+  <div class="item-text">Richton MKII Ion Engine
+The MKII Ion Engine improves the power capacity of the original Richton version with a very small increase in fuel consumption. Not generally recommended for smaller spacecraft, the Richton MKII engine is a good fit for medium sized spacecraft.
+
+Assembly: 115
+Thrust: 900</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200556_1_part_5.png">
+  <img class="icon" src="engines/selected_cropped_20260223200556_1_part_5.png" alt="engines:selected_cropped_20260223200556_1_part_5.png" loading="lazy"/>
+  <div class="item-text">Neptune MK I Engine
+The Neptune is a well armored and efficient propulsion system. For its power, the Neptune is relatively fuel efficient. It's generally a better choice for larger ships requiring powerful engines and with a high level of assembly resource needed to accommodate its size.
+
+Assembly: 145
+Thrust: 1050</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200557_1_part_5.png">
+  <img class="icon" src="engines/selected_cropped_20260223200557_1_part_5.png" alt="engines:selected_cropped_20260223200557_1_part_5.png" loading="lazy"/>
+  <div class="item-text">Neptune MK II Engine
+The MK II Neptune is substantially larger and more powerful than the MK I. It also includes a much larger cooling system with bigger heat vents for improved efficiency and reduced exposure to damage.
+The Neptune is also well shielded and is a popular choice for mercenaries who frequently engage in heavy combat.
+
+Assembly: 155
+Thrust: 1200</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200558_1_part_5.png">
+  <img class="icon" src="engines/selected_cropped_20260223200558_1_part_5.png" alt="engines:selected_cropped_20260223200558_1_part_5.png" loading="lazy"/>
+  <div class="item-text">Quantum Ion MK I Engine
+The MK I Ion engine is the civilian version of a classified military propulsion system offering far more power than other engine types. It includes 2 compression cells which improves performance for rapid speed changes and 4 sub-outlets for stability.
+
+Assembly: 170
+Thrust: 1350</div>
+</div><div class="item-card" data-key="engines:selected_cropped_20260223200559_1_part_5.png">
+  <img class="icon" src="engines/selected_cropped_20260223200559_1_part_5.png" alt="engines:selected_cropped_20260223200559_1_part_5.png" loading="lazy"/>
+  <div class="item-text">Quantum Ion MK II Engine
+The MK II is essentialy two MK I engines joined together.
+It includes 4 compression cells and 8 sub-outlets. While not the most fuel efficient engine by any measure, its output is unmatched and provides remarkable speed even for the heaviest spacecraft.
+
+Assembly: 200
+Thrust: 1500</div>
+</div>
+    </div>
+
+  </div>
+</body>
+</html>

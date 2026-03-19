@@ -7,7 +7,16 @@ from dataclasses import dataclass
 from typing import Iterable
 
 
-KNOWN_FOLDERS = ("commodities", "equipment", "weapons")
+KNOWN_FOLDERS = (
+    "commodities",
+    "equipment",
+    "weapons",
+    "engines",
+    "modules",
+    "plating",
+    "resistors",
+    "wings",
+)
 
 
 STARFIELD_CSS = r"""
@@ -355,10 +364,31 @@ def _parse_item_index(filename: str) -> int:
     return int(m.group(1))
 
 
+def _selected_match_key(filename: str) -> str | None:
+    # Example: selected_cropped_20260223200545_1_part_1.png -> 20260223200545_1
+    m = re.match(r"^selected_cropped_(.+)_part_\d+\.png$", filename)
+    return m.group(1) if m else None
+
+
+def _description_match_key(filename: str) -> str | None:
+    # Example: description_20260223200545_1.png -> 20260223200545_1
+    m = re.match(r"^description_(.+)\.png$", filename)
+    return m.group(1) if m else None
+
+
+def _parse_selected_part_index(filename: str) -> int:
+    # Example: selected_cropped_..._part_5.png -> 5
+    m = re.search(r"_part_(\d+)\.png$", filename)
+    if not m:
+        return 10**12
+    return int(m.group(1))
+
+
 def build_rows(repo_root: str, jsonl_path: str, folder: str) -> list[ItemRow]:
     rows: list[ItemRow] = []
     seq = 0
-    for rec in _parse_jsonl_items(jsonl_path):
+    records = list(_parse_jsonl_items(jsonl_path))
+    for rec in records:
         rel_path = rec.get("path")
         text = rec.get("text") or ""
         if not isinstance(rel_path, str) or not isinstance(text, str):
@@ -385,6 +415,53 @@ def build_rows(repo_root: str, jsonl_path: str, folder: str) -> list[ItemRow]:
                 icon_ok=icon_ok,
                 key=key,
                 order_idx=order_idx,
+                seq=seq,
+            )
+        )
+        seq += 1
+
+    # New extraction format:
+    # - selected_cropped_*.png files are icons with labels.
+    # - description_*.png files are matching descriptions.
+    desc_text_by_key: dict[str, str] = {}
+    for rec in records:
+        rel_path = rec.get("path")
+        text = rec.get("text") or ""
+        if not isinstance(rel_path, str) or not isinstance(text, str):
+            continue
+        if _folder_from_path(rel_path) != folder:
+            continue
+        filename = os.path.basename(_normalize_rel(rel_path))
+        desc_key = _description_match_key(filename)
+        if not desc_key:
+            continue
+        desc_text_by_key[desc_key] = _clean_ocr_text(text)
+
+    for rec in records:
+        rel_path = rec.get("path")
+        text = rec.get("text") or ""
+        if not isinstance(rel_path, str) or not isinstance(text, str):
+            continue
+        if _folder_from_path(rel_path) != folder:
+            continue
+        icon_rel = _normalize_rel(rel_path)
+        filename = os.path.basename(icon_rel)
+        match_key = _selected_match_key(filename)
+        if not match_key:
+            continue
+        icon_fs = os.path.join(repo_root, icon_rel)
+        icon_ok = os.path.exists(icon_fs)
+        desc_text = desc_text_by_key.get(match_key, "")
+        clean_label = _clean_ocr_text(text)
+        body_text = desc_text if desc_text else clean_label
+        key = f"{folder}:{filename}"
+        rows.append(
+            ItemRow(
+                icon_src=icon_rel,
+                text=body_text,
+                icon_ok=icon_ok,
+                key=key,
+                order_idx=_parse_selected_part_index(filename),
                 seq=seq,
             )
         )
@@ -511,6 +588,16 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", default="ocr_results.jsonl")
     parser.add_argument("--output-dir", default=".")
+    parser.add_argument(
+        "--folders",
+        default=",".join(KNOWN_FOLDERS),
+        help="Comma-separated folder names to generate pages for.",
+    )
+    parser.add_argument(
+        "--no-index",
+        action="store_true",
+        help="Generate category pages only and skip index.html rendering.",
+    )
     args = parser.parse_args()
 
     repo_root = os.path.dirname(os.path.abspath(__file__))
@@ -521,14 +608,16 @@ def main() -> int:
     out_dir = os.path.join(repo_root, args.output_dir)
     os.makedirs(out_dir, exist_ok=True)
 
+    requested_folders = [f.strip() for f in args.folders.split(",") if f.strip()]
     pages = {}
-    for folder in KNOWN_FOLDERS:
+    for folder in requested_folders:
         rows = build_rows(repo_root=repo_root, jsonl_path=jsonl_path, folder=folder)
         out_path = os.path.join(out_dir, f"{folder}.html")
         render_page(folder=folder, rows=rows, out_path=out_path)
         pages[folder] = f"{folder}.html"
 
-    render_index(out_path=os.path.join(out_dir, "index.html"), pages=pages)
+    if not args.no_index:
+        render_index(out_path=os.path.join(out_dir, "index.html"), pages=pages)
     return 0
 
 

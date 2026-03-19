@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Wings - Evochron Encyclopedia OCR</title>
+  <style>
+:root{
+  --bg0:#050712;
+  --bg1:#070a18;
+  --panel: rgba(10, 16, 38, 0.72);
+  --panel2: rgba(14, 23, 55, 0.6);
+  --text: #d8f0ff;
+  --muted: rgba(216, 240, 255, 0.72);
+  --accent: #76d2ff;
+  --accent2:#b7f7ff;
+  --border: rgba(118, 210, 255, 0.35);
+  --shadow: rgba(118, 210, 255, 0.18);
+  --card-radius: 14px;
+}
+
+body{
+  margin:0;
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(1200px 900px at 20% -10%, rgba(118, 210, 255, 0.22), transparent 60%),
+              radial-gradient(900px 700px at 90% 10%, rgba(183, 247, 255, 0.16), transparent 55%),
+              linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow-x:hidden;
+}
+
+/* Starfield background (pure CSS) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.75) 1px, transparent 1.5px),
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.55) 1px, transparent 1.5px),
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.5) 1px, transparent 1.5px),
+    radial-gradient(circle at 55% 65%, rgba(255,255,255,0.6) 1px, transparent 1.5px),
+    radial-gradient(circle at 75% 25%, rgba(255,255,255,0.45) 1px, transparent 1.5px),
+    radial-gradient(circle at 88% 78%, rgba(255,255,255,0.55) 1px, transparent 1.5px);
+  opacity: 0.25;
+  filter: drop-shadow(0 0 6px rgba(118,210,255,0.12));
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:-30%;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 25% 15%, rgba(118,210,255,0.14) 0, transparent 40%),
+    radial-gradient(circle at 80% 35%, rgba(183,247,255,0.11) 0, transparent 45%);
+  transform: rotate(10deg);
+}
+
+.wrap{
+  position:relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 18px 60px;
+}
+
+.topbar{
+  display:flex;
+  gap: 14px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 18px;
+}
+
+.brand{
+  display:flex;
+  gap: 12px;
+  align-items:center;
+}
+
+.logo{
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 55%),
+              linear-gradient(135deg, rgba(118,210,255,0.35), rgba(183,247,255,0.12));
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 35px var(--shadow);
+}
+
+.brand h1{
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+.brand p{
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.nav a{
+  color: var(--accent2);
+  text-decoration:none;
+  border: 1px solid rgba(118, 210, 255, 0.28);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(12, 18, 44, 0.45);
+  box-shadow: 0 12px 30px rgba(118,210,255,0.09);
+}
+.nav a:hover{
+  border-color: rgba(118, 210, 255, 0.55);
+}
+
+.page-title{
+  margin: 18px 0 8px;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+}
+
+.subtitle{
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+}
+
+.item-card{
+  display:flex;
+  gap: 14px;
+  align-items:flex-start;
+  padding: 14px;
+  border-radius: var(--card-radius);
+  background: linear-gradient(180deg, var(--panel), rgba(10,16,38,0.52));
+  border: 1px solid rgba(118, 210, 255, 0.26);
+  box-shadow: 0 18px 55px rgba(118,210,255,0.08);
+}
+
+.icon{
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(6, 10, 28, 0.45);
+  border: 1px solid rgba(118, 210, 255, 0.22);
+}
+
+.item-text{
+  flex: 1;
+  white-space: pre-wrap;
+  line-height: 1.25;
+  font-size: 13.2px;
+  color: rgba(216, 240, 255, 0.92);
+}
+
+.missing{
+  color: rgba(255, 190, 190, 0.95);
+  font-style: italic;
+}
+
+.footer{
+  margin-top: 28px;
+  color: rgba(216,240,255,0.55);
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Evochron Encyclopedia</h1>
+        </div>
+      </div>
+      <div class="nav">
+        <a href="index.html">Index</a>
+      </div>
+    </div>
+
+    <div class="page-title">Wings Items</div>
+
+    <div class="list">
+      <div class="item-card" data-key="wings:selected_cropped_20260223200629_1_part_1.png">
+  <img class="icon" src="wings/selected_cropped_20260223200629_1_part_1.png" alt="wings:selected_cropped_20260223200629_1_part_1.png" loading="lazy"/>
+  <div class="item-text">The standard entry level wing system is the StarSail.
+It provides moderate performance for small ship frames and requires a very low level of assembly resources. Combined with a low cost, its features result in this wing and thruster set being a common choice for pilots who want to compromise on agility. This system includes the weakest thruster set available to mercenaries.
+
+Assembly: 10</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200630_1_part_1.png">
+  <img class="icon" src="wings/selected_cropped_20260223200630_1_part_1.png" alt="wings:selected_cropped_20260223200630_1_part_1.png" loading="lazy"/>
+  <div class="item-text">The standard entry level wing system is the StarSail.
+It provides moderate performance for small ship frames and requires a very low level of assembly resources. Combined with a low cost, its features result in this wing and thruster set being a common choice for pilots who want to compromise on agility. This system includes the weakest thruster set available to mercenaries.
+
+Assembly: 10</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200634_1_part_2.png">
+  <img class="icon" src="wings/selected_cropped_20260223200634_1_part_2.png" alt="wings:selected_cropped_20260223200634_1_part_2.png" loading="lazy"/>
+  <div class="item-text">The StarSail MKII wing system is a minor increase in performance compared to the MKI, but it does offer its improvement at a minimal cost in assembly resources and credits. It works best on smaller frames, but is also useful on larger frames to recover needed assembly resources for pilots who want to reduce maneuverability for other options.
+
+Assembly: 20</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200635_1_part_3.png">
+  <img class="icon" src="wings/selected_cropped_20260223200635_1_part_3.png" alt="wings:selected_cropped_20260223200635_1_part_3.png" loading="lazy"/>
+  <div class="item-text">The Archer MK I is the entry level model of the medium wing classes. It provides a solid balance of low assembly resource use and maneuverability.
+The 'Archer' group of wings are generally considered some of the best options for light and medium civilian frames. Their low costs is also an added benefit.
+
+Assembly: 35</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200636_1_part_4.png">
+  <img class="icon" src="wings/selected_cropped_20260223200636_1_part_4.png" alt="wings:selected_cropped_20260223200636_1_part_4.png" loading="lazy"/>
+  <div class="item-text">The Archer MKII wing is ideal for light and medium frames. It provides improved thruster performance needed for heavier frames and doesn't require a lot of assembly resources. Its original application was on Alliance military spacecraft and is now being sold in the civilian markets of Evochron.
+
+Assembly: 55</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200638_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200638_1_part_5.png" alt="wings:selected_cropped_20260223200638_1_part_5.png" loading="lazy"/>
+  <div class="item-text">The Archer MKIII wing adds a one piece tail section to a revised Archer design, further improving agility.
+A good upgrade for small and medium frames and a popular choice among pilot of some heavier frames.
+
+Assembly: 70</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200640_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200640_1_part_5.png" alt="wings:selected_cropped_20260223200640_1_part_5.png" loading="lazy"/>
+  <div class="item-text">The Elevon MK1 wing is a unique design with side structures and a moderately powerful thruster system.
+Designed primarily for space flight, its relatively small wing structures do still provide effective agility in atmospheres.
+
+Assembly: 80</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200641_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200641_1_part_5.png" alt="wings:selected_cropped_20260223200641_1_part_5.png" loading="lazy"/>
+  <div class="item-text">The Elevon MKII wing is a heavily redesigned version of the MKI. The side structures are removed while the wings have been extended further out to each side and include arched extensions. This version is recommended for pilots interested in improved atmospheric flight as well as a slight increase in thruster capability.
+
+Assembly: 95</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200642_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200642_1_part_5.png" alt="wings:selected_cropped_20260223200642_1_part_5.png" loading="lazy"/>
+  <div class="item-text">The Ascent MK1 wing is the entry level design for higher powered medium class wings and thrusters.
+Its design features two overdrive pods for enhanced thruster capability, but its overall surface area is somewhat limited. This design is a popular choice among pilots of medium class ships looking for decent agility in open space.
+
+Assembly: 110</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200643_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200643_1_part_5.png" alt="wings:selected_cropped_20260223200643_1_part_5.png" loading="lazy"/>
+  <div class="item-text">The Ascent MKII wing is a heavily redesigned version of the MKI. The overdrive pods are replaced with wing tip extensions housing new minature overdrive units while the wing structure itself has been reshaped and expanded for improved agility. This design is a popular choice for pilots looking for excellent all-around maneuverability.
+
+Assembly: 120</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200643_2_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200643_2_part_5.png" alt="wings:selected_cropped_20260223200643_2_part_5.png" loading="lazy"/>
+  <div class="item-text">The Mercury MKI wing is designed to be a powerful open space dogfighting solution for medium and heavy class ships. It features four massive thruster overdrive units on a basic wing frame.
+Some pilots will also install this wing and thruster system on lighter ships for racing and improved agility for combat evasion.
+
+Assembly: 135</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200644_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200644_1_part_5.png" alt="wings:selected_cropped_20260223200644_1_part_5.png" loading="lazy"/>
+  <div class="item-text">The Mercury MKII wing may look very minimal in comparison to other wing designs, but it features a revolutionary advancement previously only used in military applications. Mounted inside each wing is a compact and lightweight anti-gravity pod designed to outperform traditional overdrive units. The sleek design outperforms its bulky MKI predecessor.
+
+Assembly: 150</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200645_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200645_1_part_5.png" alt="wings:selected_cropped_20260223200645_1_part_5.png" loading="lazy"/>
+  <div class="item-text">Named after the company that designed it, the
+Aerovoch MKI was designed to provide the ultimate in overall performance and maneuverability. While large and heavy, its massive overdrive thruster pods more than make up for its weight. This wing and thruster system is the primary solution for many pilots of the heaviest civilian spacecraft.
+
+Assembly: 170</div>
+</div><div class="item-card" data-key="wings:selected_cropped_20260223200646_1_part_5.png">
+  <img class="icon" src="wings/selected_cropped_20260223200646_1_part_5.png" alt="wings:selected_cropped_20260223200646_1_part_5.png" loading="lazy"/>
+  <div class="item-text">The Aerovoch MKII is effectively two MKI units put together. With not much room for improvement over the original design, it made sense to simply offer two MKI units put together for added capability.
+Some pilots say the moderate increase in mass is worth it, others prefer the MKI design. Either way, it's difficult to deny this system's performance.
+
+Assembly: ------------------------ 180</div>
+</div>
+    </div>
+
+  </div>
+</body>
+</html>
