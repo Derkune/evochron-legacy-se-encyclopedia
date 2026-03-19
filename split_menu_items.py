@@ -4,7 +4,7 @@ from typing import Iterable, Tuple
 from PIL import Image, ImageStat
 
 
-TARGET_FOLDERS = ["engines", "modules", "plating", "resistors", "wings"]
+TARGET_FOLDERS = ["frames"]
 
 # Points from your menu selection:
 COLOR_BG = (5, 15, 27)
@@ -31,7 +31,7 @@ def iter_input_images(folder_path: str) -> Iterable[str]:
         [
             fn
             for fn in os.listdir(folder_path)
-            if fn.lower().endswith(".png") and fn.lower().startswith("cropped_")
+            if fn.lower().endswith(".png") and fn.lower().startswith("icons_")
         ]
     )
     if cropped:

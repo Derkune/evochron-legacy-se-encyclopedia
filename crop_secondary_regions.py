@@ -3,7 +3,10 @@ from PIL import Image
 
 
 def crop_folder_images(
-    folder_name: str, crop_box: tuple[int, int, int, int], overwrite: bool = False
+    folder_name: str,
+    crop_box: tuple[int, int, int, int],
+    overwrite: bool = False,
+    prefix: str = "",
 ) -> None:
     base_dir = os.path.dirname(os.path.abspath(__file__))
     folder_path = os.path.join(base_dir, folder_name)
@@ -27,7 +30,7 @@ def crop_folder_images(
 
         file_path = os.path.join(folder_path, filename)
         stem, _ext = os.path.splitext(filename)
-        out_name = f"description_{stem}.png"
+        out_name = f"{prefix}{stem}.png"
         out_path = os.path.join(folder_path, out_name)
 
         if (not overwrite) and os.path.exists(out_path):
@@ -47,15 +50,17 @@ def crop_folder_images(
 
 
 def main() -> None:
-    crop_box = (361, 788, 361 + 531, 788 + 183)
+    crop_box = (1378, 111, 1378 + 156, 111 + 553)
 
-    target_folders = ["engines", "modules", "plating", "resistors", "wings"]
+    target_folders = ["frames"]
 
     # Set to True if you want to overwrite existing `cropped_*.png` outputs.
     overwrite = False
 
     for folder in target_folders:
-        crop_folder_images(folder, crop_box=crop_box, overwrite=overwrite)
+        crop_folder_images(
+            folder, crop_box=crop_box, overwrite=overwrite, prefix="icons_"
+        )
 
 
 if __name__ == "__main__":
