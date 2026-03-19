@@ -446,7 +446,6 @@ def render_page(folder: str, rows: list[ItemRow], out_path: str) -> None:
     </div>
 
     <div class="page-title">{html.escape(title)} Items</div>
-    <div class="subtitle">{len(rows)} OCR entries (duplicates kept).</div>
 
     <div class="list">
       {''.join(items_html)}
