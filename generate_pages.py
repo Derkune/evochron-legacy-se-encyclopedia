@@ -1,4 +1,5 @@
 import argparse
+import glob
 import html
 import json
 import os
@@ -222,6 +223,8 @@ def _clean_ocr_text(text: str) -> str:
             r"^\s*(here\s+(is|are)|sure|certainly|as\s+an\s+ai|note\s*:|disclaimer|explanation)\b.*$",
             re.IGNORECASE,
         ),
+        # OCR separators/artifacts like "----", "====", "____", "||||"
+        re.compile(r"^\s*[-_=|]{3,}\s*$"),
     ]
 
     kept: list[str] = []
@@ -250,6 +253,10 @@ def _clean_ocr_text(text: str) -> str:
 
         line = line.replace("\t", " ")
         # Collapse whitespace and remove indentation artifacts.
+        line = re.sub(r" {2,}", " ", line).strip()
+        # Remove inline OCR separator artifacts inside otherwise valid lines.
+        # Example: "Capacity: ---- 44" -> "Capacity: 44"
+        line = re.sub(r"[-_=|]{3,}", " ", line)
         line = re.sub(r" {2,}", " ", line).strip()
         # Remove repeated 2-word phrases: "Shield Pack Shield Pack" -> "Shield Pack"
         line = multi_word_repeated.sub(r"\1 \2", line)
@@ -336,6 +343,29 @@ def _parse_jsonl_items(jsonl_path: str) -> Iterable[dict]:
             yield json.loads(line)
 
 
+def _resolve_input_jsonl_paths(repo_root: str, input_arg: str) -> list[str]:
+    """
+    Resolve input JSONL files.
+    - Default behavior (`ocr_results.jsonl`) loads all `*ocr_results.jsonl` files
+      so multi-batch OCR outputs are included automatically.
+    - Custom --input supports a comma-separated file list.
+    """
+    if input_arg.strip() == "ocr_results.jsonl":
+        candidates = sorted(glob.glob(os.path.join(repo_root, "*ocr_results.jsonl")))
+        if candidates:
+            return candidates
+
+    rel_paths = [p.strip() for p in input_arg.split(",") if p.strip()]
+    return [os.path.join(repo_root, p) for p in rel_paths]
+
+
+def _load_records(jsonl_paths: list[str]) -> list[dict]:
+    records: list[dict] = []
+    for path in jsonl_paths:
+        records.extend(_parse_jsonl_items(path))
+    return records
+
+
 def _folder_from_path(rel_path: str) -> str | None:
     parts = _normalize_rel(rel_path).split("/")
     for p in parts:
@@ -387,10 +417,9 @@ def _parse_selected_part_index(filename: str) -> int:
     return int(m.group(1))
 
 
-def build_rows(repo_root: str, jsonl_path: str, folder: str) -> list[ItemRow]:
+def build_rows(repo_root: str, records: list[dict], folder: str) -> list[ItemRow]:
     rows: list[ItemRow] = []
     seq = 0
-    records = list(_parse_jsonl_items(jsonl_path))
     for rec in records:
         rel_path = rec.get("path")
         text = rec.get("text") or ""
@@ -525,7 +554,7 @@ def render_page(folder: str, rows: list[ItemRow], out_path: str) -> None:
       </div>
     </div>
 
-    <div class="page-title">{html.escape(title)} Items</div>
+    <div class="page-title">{html.escape(title)}</div>
 
     <div class="list">
       {''.join(items_html)}
@@ -604,9 +633,11 @@ def main() -> int:
     args = parser.parse_args()
 
     repo_root = os.path.dirname(os.path.abspath(__file__))
-    jsonl_path = os.path.join(repo_root, args.input)
-    if not os.path.exists(jsonl_path):
-        raise SystemExit(f"Missing input JSONL: {jsonl_path}")
+    jsonl_paths = _resolve_input_jsonl_paths(repo_root=repo_root, input_arg=args.input)
+    missing_paths = [p for p in jsonl_paths if not os.path.exists(p)]
+    if missing_paths:
+        raise SystemExit(f"Missing input JSONL(s): {', '.join(missing_paths)}")
+    records = _load_records(jsonl_paths)
 
     out_dir = os.path.join(repo_root, args.output_dir)
     os.makedirs(out_dir, exist_ok=True)
@@ -614,7 +645,7 @@ def main() -> int:
     requested_folders = [f.strip() for f in args.folders.split(",") if f.strip()]
     pages = {}
     for folder in requested_folders:
-        rows = build_rows(repo_root=repo_root, jsonl_path=jsonl_path, folder=folder)
+        rows = build_rows(repo_root=repo_root, records=records, folder=folder)
         out_path = os.path.join(out_dir, f"{folder}.html")
         render_page(folder=folder, rows=rows, out_path=out_path)
         pages[folder] = f"{folder}.html"
