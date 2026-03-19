@@ -318,7 +318,6 @@ def render_page(folder: str, rows: list[ItemRow], out_path: str) -> None:
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Evochron Encyclopedia</h1>
-          <p>OCR text with matching item icons</p>
         </div>
       </div>
       <div class="nav">
@@ -333,7 +332,6 @@ def render_page(folder: str, rows: list[ItemRow], out_path: str) -> None:
       {''.join(items_html)}
     </div>
 
-    <div class="footer">Generated from <code>ocr_results.jsonl</code>.</div>
   </div>
 </body>
 </html>
@@ -366,7 +364,6 @@ def render_index(out_path: str, pages: dict[str, str]) -> None:
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Evochron Encyclopedia</h1>
-          <p>Dark sci-fi pages for OCR text + icons</p>
         </div>
       </div>
       <div class="nav">
@@ -375,7 +372,6 @@ def render_index(out_path: str, pages: dict[str, str]) -> None:
     </div>
 
     <div class="page-title">Choose a Category</div>
-    <div class="subtitle">One page per folder: icon on the left, extracted text to the right.</div>
 
     <div class="list">
       <div class="item-card" style="align-items:center;">
@@ -385,7 +381,6 @@ def render_index(out_path: str, pages: dict[str, str]) -> None:
       </div>
     </div>
 
-    <div class="footer">Generated from <code>ocr_results.jsonl</code>.</div>
   </div>
 </body>
 </html>
