@@ -12,6 +12,7 @@ KNOWN_FOLDERS = (
     "equipment",
     "weapons",
     "engines",
+    "frames",
     "modules",
     "plating",
     "resistors",
@@ -365,8 +366,10 @@ def _parse_item_index(filename: str) -> int:
 
 
 def _selected_match_key(filename: str) -> str | None:
-    # Example: selected_cropped_20260223200545_1_part_1.png -> 20260223200545_1
-    m = re.match(r"^selected_cropped_(.+)_part_\d+\.png$", filename)
+    # Examples:
+    # - selected_cropped_20260223200545_1_part_1.png -> 20260223200545_1
+    # - selected_icons_20260223200505_1_part_1.png -> 20260223200505_1
+    m = re.match(r"^selected_(?:cropped|icons)_(.+)_part_\d+\.png$", filename)
     return m.group(1) if m else None
 
 
