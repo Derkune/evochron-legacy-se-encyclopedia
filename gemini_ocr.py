@@ -7,9 +7,12 @@ from typing import Iterable, Optional
 
 from PIL import Image
 from google import genai
+import dotenv
+
+dotenv.load_dotenv()
 
 
-DEFAULT_MODEL = "gemini-1.5-pro"
+DEFAULT_MODEL = "gemini-3-flash-preview"
 DEFAULT_MAX_OUTPUT_TOKENS = 4096
 
 
@@ -102,7 +105,11 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     args = parser.parse_args(argv)
 
-    api_key = args.api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    api_key = (
+        args.api_key
+        or os.environ.get("GEMINI_API_KEY")
+        or os.environ.get("GOOGLE_API_KEY")
+    )
     if not api_key:
         print(
             "Missing API key. Provide --api-key or set GEMINI_API_KEY / GOOGLE_API_KEY env vars.",
@@ -139,11 +146,19 @@ def main(argv: Optional[list[str]] = None) -> int:
             except Exception as e:
                 print(f"[error] Failed {path}: {e}", file=sys.stderr)
                 if out_fp:
-                    out_fp.write(json.dumps({"path": path, "text": "", "error": str(e)}, ensure_ascii=False) + "\n")
+                    out_fp.write(
+                        json.dumps(
+                            {"path": path, "text": "", "error": str(e)},
+                            ensure_ascii=False,
+                        )
+                        + "\n"
+                    )
                 continue
 
             if out_fp:
-                out_fp.write(json.dumps({"path": path, "text": text}, ensure_ascii=False) + "\n")
+                out_fp.write(
+                    json.dumps({"path": path, "text": text}, ensure_ascii=False) + "\n"
+                )
                 out_fp.flush()
 
             if args.no_headers:
@@ -166,4 +181,3 @@ def main(argv: Optional[list[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
