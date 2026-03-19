@@ -22,7 +22,7 @@ def crop_folder_images(
         if not filename.lower().endswith(valid_exts):
             continue
 
-        if filename.lower().startswith("cropped_"):
+        if filename.lower().startswith("icons_"):
             continue
 
         if filename.lower().startswith("selected_"):
@@ -50,7 +50,7 @@ def crop_folder_images(
 
 
 def main() -> None:
-    crop_box = (1378, 111, 1378 + 156, 111 + 553)
+    crop_box = (1005, 773, 1005 + 582, 773 + 204)
 
     target_folders = ["frames"]
 
@@ -59,7 +59,7 @@ def main() -> None:
 
     for folder in target_folders:
         crop_folder_images(
-            folder, crop_box=crop_box, overwrite=overwrite, prefix="icons_"
+            folder, crop_box=crop_box, overwrite=overwrite, prefix="description_"
         )
 
 
