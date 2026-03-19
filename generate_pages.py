@@ -187,6 +187,126 @@ def _escape_text(text: str) -> str:
     return html.escape(text, quote=False)
 
 
+def _clean_ocr_text(text: str) -> str:
+    """
+    Reduce common OCR / LLM artifacts for display:
+    - remove model preface lines (if any)
+    - normalize whitespace (collapse extra spaces, trim edges)
+    - remove obvious repeated words/phrases on a line
+    - remove consecutive duplicate lines and extra blank lines
+    """
+    if not text:
+        return ""
+
+    raw = text.replace("\r\n", "\n").replace("\r", "\n")
+
+    # Many OCR outputs start with an item index that is redundant with the icon.
+    # Examples: "1\nFood - Compressed Food..." or "10 Mach - Machinery Parts..."
+    raw = re.sub(r"^\s*\d+\s*(?:\n\s*)?", "", raw, count=1)
+    lines = raw.split("\n")
+
+    # Drop lines that look like model wrapper text.
+    drop_line_re_list = [
+        re.compile(r"^\s*```+\s*$"),
+        re.compile(
+            r"^\s*(here\s+(is|are)|sure|certainly|as\s+an\s+ai|note\s*:|disclaimer|explanation)\b.*$",
+            re.IGNORECASE,
+        ),
+    ]
+
+    kept: list[str] = []
+    for line in lines:
+        if line.strip() == "":
+            kept.append("")
+            continue
+        if any(rx.search(line) for rx in drop_line_re_list):
+            continue
+        kept.append(line)
+
+    # Normalize per-line spacing and remove repeated words/phrases.
+    normalized: list[str] = []
+    multi_word_repeated = re.compile(
+        r"\b([A-Za-z0-9_-]+)\s+([A-Za-z0-9_-]+)\s+\1\s+\2\b",
+        re.IGNORECASE,
+    )
+    single_word_repeated = re.compile(
+        r"\b([A-Za-z][A-Za-z0-9_-]{1,})\s+\1\b", re.IGNORECASE
+    )
+
+    for line in kept:
+        if line == "":
+            normalized.append("")
+            continue
+
+        line = line.replace("\t", " ")
+        # Collapse whitespace and remove indentation artifacts.
+        line = re.sub(r" {2,}", " ", line).strip()
+        # Remove repeated 2-word phrases: "Shield Pack Shield Pack" -> "Shield Pack"
+        line = multi_word_repeated.sub(r"\1 \2", line)
+        # Remove repeated single word: "Torpedo Torpedo" -> "Torpedo"
+        line = single_word_repeated.sub(r"\1", line)
+
+        normalized.append(line)
+
+    # Remove consecutive duplicate lines; collapse multiple blank lines to one.
+    dedup: list[str] = []
+    prev_nonempty: str | None = None
+    last_blank = False
+    for line in normalized:
+        if line == "":
+            if last_blank:
+                continue
+            dedup.append("")
+            last_blank = True
+            prev_nonempty = None
+            continue
+
+        if prev_nonempty is not None and line == prev_nonempty:
+            continue
+
+        dedup.append(line)
+        prev_nonempty = line
+        last_blank = False
+
+    # Reflow line breaks that are clearly "wrapped text" rather than real paragraph/section breaks.
+    # Heuristic: if the previous non-empty line doesn't end with sentence punctuation, and the next line
+    # starts with a lowercase letter, join them with a space.
+    reflowed: list[str] = []
+    for line in dedup:
+        if line == "":
+            if reflowed and reflowed[-1] != "":
+                reflowed.append("")
+            continue
+
+        if reflowed and reflowed[-1] != "":
+            prev = reflowed[-1]
+            prev_stripped = prev.rstrip()
+            next_stripped = line.lstrip()
+
+            prev_ends_sentence = bool(re.search(r"[.!?;:]\s*$", prev_stripped))
+            next_starts_lower = bool(re.match(r"^[a-z]", next_stripped))
+
+            # Keep the newline if the previous line looks like a header/title.
+            # Specifically look for " - " with spaces, not hyphens inside words (e.g. "Anti-matter").
+            prev_is_header_like = bool(re.search(r"\s-\s", prev_stripped)) or bool(
+                re.match(r"^\d+\s*$", prev_stripped)
+            )
+
+            if (
+                (not prev_ends_sentence)
+                and next_starts_lower
+                and (not prev_is_header_like)
+            ):
+                reflowed[-1] = re.sub(
+                    r"\s+", " ", prev_stripped + " " + next_stripped
+                ).strip()
+                continue
+
+        reflowed.append(line)
+
+    return "\n".join(reflowed).strip()
+
+
 @dataclass(frozen=True)
 class ItemRow:
     icon_src: str
@@ -261,7 +381,7 @@ def build_rows(repo_root: str, jsonl_path: str, folder: str) -> list[ItemRow]:
         rows.append(
             ItemRow(
                 icon_src=icon_rel,
-                text=text,
+                text=_clean_ocr_text(text),
                 icon_ok=icon_ok,
                 key=key,
                 order_idx=order_idx,
