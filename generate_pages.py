@@ -2,6 +2,7 @@ import argparse
 import html
 import json
 import os
+import re
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -192,6 +193,8 @@ class ItemRow:
     text: str
     icon_ok: bool
     key: str  # used for stable alt/title
+    order_idx: int
+    seq: int  # stable ordering among duplicates
 
 
 def _parse_jsonl_items(jsonl_path: str) -> Iterable[dict]:
@@ -220,8 +223,21 @@ def _item_to_icon_filename(item_filename: str) -> str | None:
     return item_filename.replace("_item_", "_item_icon_", 1)
 
 
+def _parse_item_index(filename: str) -> int:
+    # Expected: commodities_item_1.jpg, equipment_item_12.jpg, weapons_item_3.jpg, etc.
+    # Extract the first integer after "_item_".
+    m = re.search(r"_item_(\d+)\.jpg$", filename)
+    if not m:
+        # Fallback: try parsing any digits in the same region.
+        m = re.search(r"_item_(\d+)", filename)
+    if not m:
+        return 10**12
+    return int(m.group(1))
+
+
 def build_rows(repo_root: str, jsonl_path: str, folder: str) -> list[ItemRow]:
     rows: list[ItemRow] = []
+    seq = 0
     for rec in _parse_jsonl_items(jsonl_path):
         rel_path = rec.get("path")
         text = rec.get("text") or ""
@@ -241,7 +257,21 @@ def build_rows(repo_root: str, jsonl_path: str, folder: str) -> list[ItemRow]:
         icon_fs = os.path.join(repo_root, icon_rel)
         icon_ok = os.path.exists(icon_fs)
         key = f"{folder}:{icon_filename}"
-        rows.append(ItemRow(icon_src=icon_rel, text=text, icon_ok=icon_ok, key=key))
+        order_idx = _parse_item_index(item_filename)
+        rows.append(
+            ItemRow(
+                icon_src=icon_rel,
+                text=text,
+                icon_ok=icon_ok,
+                key=key,
+                order_idx=order_idx,
+                seq=seq,
+            )
+        )
+        seq += 1
+
+    # Sort by numeric item index (1, 2, 3, ...), but keep duplicates stable.
+    rows.sort(key=lambda r: (r.order_idx, r.seq))
     return rows
 
 
