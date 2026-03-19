@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Commodities - Evochron Encyclopedia OCR</title>
+  <style>
+:root{
+  --bg0:#050712;
+  --bg1:#070a18;
+  --panel: rgba(10, 16, 38, 0.72);
+  --panel2: rgba(14, 23, 55, 0.6);
+  --text: #d8f0ff;
+  --muted: rgba(216, 240, 255, 0.72);
+  --accent: #76d2ff;
+  --accent2:#b7f7ff;
+  --border: rgba(118, 210, 255, 0.35);
+  --shadow: rgba(118, 210, 255, 0.18);
+  --card-radius: 14px;
+}
+
+body{
+  margin:0;
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(1200px 900px at 20% -10%, rgba(118, 210, 255, 0.22), transparent 60%),
+              radial-gradient(900px 700px at 90% 10%, rgba(183, 247, 255, 0.16), transparent 55%),
+              linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow-x:hidden;
+}
+
+/* Starfield background (pure CSS) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.75) 1px, transparent 1.5px),
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.55) 1px, transparent 1.5px),
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.5) 1px, transparent 1.5px),
+    radial-gradient(circle at 55% 65%, rgba(255,255,255,0.6) 1px, transparent 1.5px),
+    radial-gradient(circle at 75% 25%, rgba(255,255,255,0.45) 1px, transparent 1.5px),
+    radial-gradient(circle at 88% 78%, rgba(255,255,255,0.55) 1px, transparent 1.5px);
+  opacity: 0.25;
+  filter: drop-shadow(0 0 6px rgba(118,210,255,0.12));
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:-30%;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 25% 15%, rgba(118,210,255,0.14) 0, transparent 40%),
+    radial-gradient(circle at 80% 35%, rgba(183,247,255,0.11) 0, transparent 45%);
+  transform: rotate(10deg);
+}
+
+.wrap{
+  position:relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 18px 60px;
+}
+
+.topbar{
+  display:flex;
+  gap: 14px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 18px;
+}
+
+.brand{
+  display:flex;
+  gap: 12px;
+  align-items:center;
+}
+
+.logo{
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 55%),
+              linear-gradient(135deg, rgba(118,210,255,0.35), rgba(183,247,255,0.12));
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 35px var(--shadow);
+}
+
+.brand h1{
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+.brand p{
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.nav a{
+  color: var(--accent2);
+  text-decoration:none;
+  border: 1px solid rgba(118, 210, 255, 0.28);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(12, 18, 44, 0.45);
+  box-shadow: 0 12px 30px rgba(118,210,255,0.09);
+}
+.nav a:hover{
+  border-color: rgba(118, 210, 255, 0.55);
+}
+
+.page-title{
+  margin: 18px 0 8px;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+}
+
+.subtitle{
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+}
+
+.item-card{
+  display:flex;
+  gap: 14px;
+  align-items:flex-start;
+  padding: 14px;
+  border-radius: var(--card-radius);
+  background: linear-gradient(180deg, var(--panel), rgba(10,16,38,0.52));
+  border: 1px solid rgba(118, 210, 255, 0.26);
+  box-shadow: 0 18px 55px rgba(118,210,255,0.08);
+}
+
+.icon{
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(6, 10, 28, 0.45);
+  border: 1px solid rgba(118, 210, 255, 0.22);
+}
+
+.item-text{
+  flex: 1;
+  white-space: pre-wrap;
+  line-height: 1.25;
+  font-size: 13.2px;
+  color: rgba(216, 240, 255, 0.92);
+}
+
+.missing{
+  color: rgba(255, 190, 190, 0.95);
+  font-style: italic;
+}
+
+.footer{
+  margin-top: 28px;
+  color: rgba(216,240,255,0.55);
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Evochron Encyclopedia</h1>
+          <p>OCR text with matching item icons</p>
+        </div>
+      </div>
+      <div class="nav">
+        <a href="index.html">Index</a>
+      </div>
+    </div>
+
+    <div class="page-title">Commodities Items</div>
+    <div class="subtitle">30 OCR entries (duplicates kept).</div>
+
+    <div class="list">
+      <div class="item-card" data-key="commodities:commodities_item_icon_1.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_1.jpg" alt="commodities:commodities_item_icon_1.jpg" loading="lazy"/>
+  <div class="item-text">1
+Food - Compressed Food
+Food units provide about a week's supply of meals each. Food can be
+scarce in Evochron. While it is usually very low in value, some systems
+do pay substantially more.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_10.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_10.jpg" alt="commodities:commodities_item_icon_10.jpg" loading="lazy"/>
+  <div class="item-text">10 Mach - Machinery Parts
+   Machinery parts generally consist of cast or forged components in fairly
+   high demand (brackets, sprockets, springs, etc). They usually provide
+   a fairly high profit, much higher than raw metal alloys alone.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_11.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_11.jpg" alt="commodities:commodities_item_icon_11.jpg" loading="lazy"/>
+  <div class="item-text">11 Text - Clothing/Fabric
+   Textiles are generally the cheapest items to transport and are generally
+   best left out of a cargo bay unless you've got the extra space.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_12.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_12.jpg" alt="commodities:commodities_item_icon_12.jpg" loading="lazy"/>
+  <div class="item-text">12      Plat - Platinum Units
+        Platinum is generally the most valuable commodity in Evochron. It is
+        used for electronics, primarily in the computer and weapon systems of
+        spacecraft, due to its longevity and conductive properties.  Many mercenaries
+        will jettison their existing cargo to recover platinum.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_13.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_13.jpg" alt="commodities:commodities_item_icon_13.jpg" loading="lazy"/>
+  <div class="item-text">13      Biol - Biological Units
+        Biological Units consist of organic material.  The material can be
+        from plant or animal samples taken. Such materials can be very valuable
+        in the production of genetic sequences or scientific research.  While
+        not generally valuable in most industries, some locations pay a premium
+        for it.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_14.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_14.jpg" alt="commodities:commodities_item_icon_14.jpg" loading="lazy"/>
+  <div class="item-text">14
+Oxyg - Oxygen Units
+Oxygen is considered the life-blood of space exploration. While most
+spacecraft can recycle and even generate most of their oxygen needs in-flight,
+pure oxygen is still valuable in certain industries and for replenishing
+spacecraft oxygen production/recycle systems.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_15.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_15.jpg" alt="commodities:commodities_item_icon_15.jpg" loading="lazy"/>
+  <div class="item-text">15      Gold - Gold Units
+        Gold remains a very valuable commodity. It is useful in the production
+        of electronics and their radiation shielding.  It is also used as money
+        in some economies and is valuable to jewelry industries.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_16.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_16.jpg" alt="commodities:commodities_item_icon_16.jpg" loading="lazy"/>
+  <div class="item-text">16      Silv - Silver Units
+          Silver is generally less valuable than gold, although it has many uses
+          that keep it valuable in most economies.  Certain digital and solar technologies
+          also keep it in high demand.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_17.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_17.jpg" alt="commodities:commodities_item_icon_17.jpg" loading="lazy"/>
+  <div class="item-text">17
+Watr - Water Units
+Water is generally not too valuable, but is still worth some credits
+when it can be delivered without recycling or production procedures.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_18.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_18.jpg" alt="commodities:commodities_item_icon_18.jpg" loading="lazy"/>
+  <div class="item-text">18      Armr - Armor Plates
+        Armor is a somewhat valuable commodity used in the construction of
+        spacecraft hulls and cargo containers.  It's not a very common trade item
+        as most armor is quickly used.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_19.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_19.jpg" alt="commodities:commodities_item_icon_19.jpg" loading="lazy"/>
+  <div class="item-text">19      Memr - Memory Banks
+        Memory banks consist of numerous one zettabyte storage cells packed
+        into unit sized integrated circuits.  They are designed to be linked together
+        for increased storage capacity.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_2.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_2.jpg" alt="commodities:commodities_item_icon_2.jpg" loading="lazy"/>
+  <div class="item-text">2
+Meds - Medical Supplies
+Medical supplies are an essential part of survival in Evochron.  High
+radiation exposure and virtually non-existent preventative health care
+result in a higher than normal demand for medical supplies, which can
+include medicine, equipment, and information.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_20.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_20.jpg" alt="commodities:commodities_item_icon_20.jpg" loading="lazy"/>
+  <div class="item-text">20
+Batt - Batteries
+Batteries are universal storage cells designed to work in numerous
+different configurations in a variety of different applications ranging
+from weapons to equipment. Advanced insulation technology allows them
+to be used in virtually any environment.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_21.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_21.jpg" alt="commodities:commodities_item_icon_21.jpg" loading="lazy"/>
+  <div class="item-text">21      EEmt - Energy Emitters
+        Energy emitters are a universal component used in the construction
+        of various equipment items. They can direct a focused beam of energy useful
+        in mining, fuel recovery, hull repair, or a number of other applications.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_22.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_22.jpg" alt="commodities:commodities_item_icon_22.jpg" loading="lazy"/>
+  <div class="item-text">22      RefM - Reflective Mirrors
+        Reflective mirrors can redirect light or other forms of energy within
+        a device.  They are flat and do not alter the source of energy directed
+        at them.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_23.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_23.jpg" alt="commodities:commodities_item_icon_23.jpg" loading="lazy"/>
+  <div class="item-text">23
+FclM - Focal Mirrors
+Focal mirrors can direct light or other forms of energy to a specific
+point within a device.  They focus the energy into a more compact and
+higher charged state.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_24.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_24.jpg" alt="commodities:commodities_item_icon_24.jpg" loading="lazy"/>
+  <div class="item-text">24      RadR - Radio Receivers
+        Radio receivers are used in devices to accept external radio signals
+        and either relay or translate them into a required format. They include
+        all necessary processors and universal interface connections for a variety
+        of applications.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_25.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_25.jpg" alt="commodities:commodities_item_icon_25.jpg" loading="lazy"/>
+  <div class="item-text">25      RadT -  Radio Transmitters
+        Radio transmitters are used in devices to broadcast radio signals in
+        numerous different formats.  They include all necessary processors and
+        universal interface connections for a variety of applications.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_26.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_26.jpg" alt="commodities:commodities_item_icon_26.jpg" loading="lazy"/>
+  <div class="item-text">23      FcIM - Focal Mirrors
+        Focal mirrors can direct light or other forms of energy to a specific
+        point within a device.  They focus the energy into a more compact and
+        higher charged state.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_27.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_27.jpg" alt="commodities:commodities_item_icon_27.jpg" loading="lazy"/>
+  <div class="item-text">24      RadR - Radio Receivers
+        Radio receivers are used in devices to accept external radio signals
+        and either relay or translate them into a required format. They include
+        all necessary processors and universal interface connections for a variety
+        of applications.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_28.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_28.jpg" alt="commodities:commodities_item_icon_28.jpg" loading="lazy"/>
+  <div class="item-text">25      RadT - Radio Transmitters
+        Radio transmitters are used in devices to broadcast radio signals in
+        numerous different formats.  They include all necessary processors and
+        universal interface connections for a variety of applications.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_29.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_29.jpg" alt="commodities:commodities_item_icon_29.jpg" loading="lazy"/>
+  <div class="item-text">26    PrtA - Particle Accelerators
+      Particle accelerators are used in devices to accelerate energy cast
+      into them.  They are compatible with many different configurations and
+      energy types.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_3.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_3.jpg" alt="commodities:commodities_item_icon_3.jpg" loading="lazy"/>
+  <div class="item-text">3
+Hydr - Hydrogen Cells
+Hydrogen fuel cells are a common medium level energy source that some
+systems use for general purpose electrical power needs. Their moderate
+value makes them a popular shipping choice.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_30.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_30.jpg" alt="commodities:commodities_item_icon_30.jpg" loading="lazy"/>
+  <div class="item-text">27
+Lens - Lenses
+Lenses are constructed of transparent heat resistant metals and are
+used in the production of many different devices. They are often combined
+with emitters, mirrors, and/or accelerators to produce desired items.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_4.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_4.jpg" alt="commodities:commodities_item_icon_4.jpg" loading="lazy"/>
+  <div class="item-text">4
+Elec - Electrical Supplies
+Electronics are in demand, but are also high in supply.  They generally
+aren't a valuable commodity, but shipping supplies of electronics can
+be an easy way for new mercenaries to make quick credits.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_5.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_5.jpg" alt="commodities:commodities_item_icon_5.jpg" loading="lazy"/>
+  <div class="item-text">5
+Solr - Solar Cells
+Solar cells are a low end energy source. Don't expect much for these
+primitive devices, but in the right system, they can be worth the cargo
+space.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_6.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_6.jpg" alt="commodities:commodities_item_icon_6.jpg" loading="lazy"/>
+  <div class="item-text">6      Metl - Metal Ore
+       Metal ore is a low value commodity that provides the raw material needed
+       for manufacturing. Delivering this item doesn't usually provide much profit
+       unless there is a temporary demand for it.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_7.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_7.jpg" alt="commodities:commodities_item_icon_7.jpg" loading="lazy"/>
+  <div class="item-text">7       Diam - Diamonds
+        Diamonds are a high value commodity used in a variety of applications
+ranging from cutting tools to optical equipment.  They are almost always
+in demand and are a primary incentive for mining.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_8.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_8.jpg" alt="commodities:commodities_item_icon_8.jpg" loading="lazy"/>
+  <div class="item-text">8
+Anti - Antimatter Cells
+Anti-matter cells are a high end energy source that are extremely expensive
+to produce and provide a very long lifespan. As a result, a premium is
+paid for these devices to anyone who can deliver them.</div>
+</div><div class="item-card" data-key="commodities:commodities_item_icon_9.jpg">
+  <img class="icon" src="commodities/commodities_item_icon_9.jpg" alt="commodities:commodities_item_icon_9.jpg" loading="lazy"/>
+  <div class="item-text">9
+Fusn - Fusion Generators
+Fusion cells are also a high end energy source, but are much easier
+to produce. They feature a very long lifespan and usually provide a high
+price for shipping.</div>
+</div>
+    </div>
+
+    <div class="footer">Generated from <code>ocr_results.jsonl</code>.</div>
+  </div>
+</body>
+</html>
